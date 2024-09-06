@@ -7,7 +7,7 @@ const {
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
       console.error(err);
       return res.status(SERVER_ISSUE).send({ message: "An error has occurred on the server" });
@@ -19,7 +19,7 @@ module.exports.getUserById = (req, res) => {
 
   User.findById(userid)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -36,7 +36,7 @@ module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err.name);
       console.error(err);
