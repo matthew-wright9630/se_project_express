@@ -12,11 +12,11 @@ module.exports.getUsers = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      } else {
-        return res.status(SERVER_ISSUE).send({ message: err.message });
       }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      return res.status(SERVER_ISSUE).send({ message: err.message });
     });
 };
 
@@ -30,11 +30,11 @@ module.exports.getUserById = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      } else {
-        return res.status(SERVER_ISSUE).send({ message: err.message });
       }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      return res.status(SERVER_ISSUE).send({ message: err.message });
     });
 };
 
@@ -48,10 +48,10 @@ module.exports.createUser = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      } else {
-        return res.status(SERVER_ISSUE).send({ message: err.message });
       }
+      if (err.name === "CastError" || err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      return res.status(SERVER_ISSUE).send({ message: err.message });
     });
 };
