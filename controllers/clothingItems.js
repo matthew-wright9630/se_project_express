@@ -10,13 +10,9 @@ module.exports.getClothingItems = (req, res) => {
     .then((items) => res.send({ data: items }))
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-      return res.status(SERVER_ISSUE).send({ message: err.message });
+      return res
+        .status(SERVER_ISSUE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -27,15 +23,13 @@ module.exports.createClothingItem = (req, res) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err.name);
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
+      if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
-      }
-      return res.status(SERVER_ISSUE).send({ message: err.message });
+      return res
+        .status(SERVER_ISSUE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -49,9 +43,11 @@ module.exports.deleteClothingItem = (req, res) => {
         return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
       }
       if (err.name === "CastError" || err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
-      return res.status(SERVER_ISSUE).send({ message: err.message });
+      return res
+        .status(SERVER_ISSUE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
