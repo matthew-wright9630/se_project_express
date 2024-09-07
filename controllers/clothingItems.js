@@ -1,7 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST,
-  ENTRY_NOT_FOUND,
+  NOT_FOUND,
   SERVER_ISSUE,
 } = require("../utils/errors");
 
@@ -40,7 +40,7 @@ module.exports.deleteClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
       if (err.name === "CastError" || err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
@@ -62,7 +62,7 @@ module.exports.likeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
       if (err.name === "CastError" || err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
@@ -82,7 +82,7 @@ module.exports.dislikeClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(ENTRY_NOT_FOUND).send({ message: err.message });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
       if (err.name === "CastError" || err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
