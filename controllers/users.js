@@ -8,6 +8,7 @@ const {
   SERVER_ISSUE,
   DUPLICATE_USER_ERROR,
   AUTHENTICATION_ERROR,
+  CONFLICT_ERROR,
 } = require("../utils/errors");
 
 module.exports.createUser = (req, res) => {
@@ -45,7 +46,7 @@ module.exports.createUser = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.status === DUPLICATE_USER_ERROR) {
-        return res.status(409).send({
+        return res.status(CONFLICT_ERROR).send({
           message: "Email address is already taken. Please provide a new email",
         });
       }

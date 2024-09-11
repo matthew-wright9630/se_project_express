@@ -9,10 +9,9 @@ const {
 const auth = require("../middlewares/auth");
 
 clothingItemsRouter.get("/", getClothingItems);
-clothingItemsRouter.use(auth);
-clothingItemsRouter.post("/", createClothingItem);
-clothingItemsRouter.put("/:itemId/likes", likeClothingItem);
-clothingItemsRouter.delete("/:itemId/likes", dislikeClothingItem);
-clothingItemsRouter.delete("/:itemId", deleteClothingItem);
+clothingItemsRouter.post("/", auth, createClothingItem);
+clothingItemsRouter.put("/:itemId/likes", auth, likeClothingItem);
+clothingItemsRouter.delete("/:itemId/likes", auth, dislikeClothingItem);
+clothingItemsRouter.delete("/:itemId", auth, deleteClothingItem);
 
 module.exports = clothingItemsRouter;

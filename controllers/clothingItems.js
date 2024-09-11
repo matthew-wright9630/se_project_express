@@ -36,7 +36,7 @@ module.exports.createClothingItem = (req, res) => {
 
 module.exports.deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndRemove(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
@@ -44,7 +44,11 @@ module.exports.deleteClothingItem = (req, res) => {
         error.name = "ForbiddenError";
         throw error;
       }
-      res.send({ data: item });
+      return item
+        .deleteOne()
+        .then(() =>
+          res.send({ message: "Item has been successfully deleted" })
+        );
     })
     .catch((err) => {
       console.error(err);

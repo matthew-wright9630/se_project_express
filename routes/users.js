@@ -4,8 +4,8 @@ const auth = require("../middlewares/auth");
 
 userRoutes.post("/signUp", createUser);
 userRoutes.post("/signin", login);
-userRoutes.use(auth);
-userRoutes.get("/users/me", getCurrentUser);
-userRoutes.patch("/users/me", updateUser);
+
+userRoutes.get("/users/me", auth, getCurrentUser);
+userRoutes.patch("/users/me", auth, updateUser);
 
 module.exports = userRoutes;

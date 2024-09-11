@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const helmet = require("helmet");
+const rateLimiter = require("./utils/ratelimiter");
 const router = require("./routes/index");
 
 const app = express();
@@ -14,6 +16,8 @@ mongoose
 
 app.use(express.json());
 
+app.use(helmet());
+app.use(rateLimiter);
 app.use(cors());
 
 app.use("/", router);
