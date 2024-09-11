@@ -1,6 +1,7 @@
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = require("../utils/config");
+const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -8,38 +9,6 @@ const {
   DUPLICATE_USER_ERROR,
   AUTHENTICATION_ERROR,
 } = require("../utils/errors");
-const JWT_SECRET = require("../utils/config");
-
-// module.exports.getUsers = (req, res) => {
-//   User.find({})
-//     .then((users) => res.send(users))
-//     .catch((err) => {
-//       console.error(err);
-//       return res
-//         .status(SERVER_ISSUE)
-//         .send({ message: "An error has occurred on the server" });
-//     });
-// };
-
-// module.exports.getUserById = (req, res) => {
-//   const { userid } = req.params;
-
-//   User.findById(userid)
-//     .orFail()
-//     .then((user) => res.send(user))
-//     .catch((err) => {
-//       console.error(err);
-//       if (err.name === "DocumentNotFoundError") {
-//         return res.status(NOT_FOUND).send({ message: err.message });
-//       }
-//       if (err.name === "CastError") {
-//         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-//       }
-//       return res
-//         .status(SERVER_ISSUE)
-//         .send({ message: "An error has occurred on the server" });
-//     });
-// };
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -61,9 +30,9 @@ module.exports.createUser = (req, res) => {
     })
     .then((hash) =>
       User.create({
-        name: name,
-        avatar: avatar,
-        email: email,
+        name,
+        avatar,
+        email,
         password: hash,
       })
     )
@@ -130,7 +99,7 @@ module.exports.updateUser = (req, res) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
-    { name: name, avatar: avatar },
+    { name, avatar },
     { new: true, runValidators: true }
   )
     .then((user) => {
