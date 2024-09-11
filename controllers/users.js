@@ -10,36 +10,36 @@ const {
 } = require("../utils/errors");
 const JWT_SECRET = require("../utils/config");
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
+// module.exports.getUsers = (req, res) => {
+//   User.find({})
+//     .then((users) => res.send(users))
+//     .catch((err) => {
+//       console.error(err);
+//       return res
+//         .status(SERVER_ISSUE)
+//         .send({ message: "An error has occurred on the server" });
+//     });
+// };
 
-module.exports.getUserById = (req, res) => {
-  const { userid } = req.params;
+// module.exports.getUserById = (req, res) => {
+//   const { userid } = req.params;
 
-  User.findById(userid)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: err.message });
-      }
-      if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-      }
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
+//   User.findById(userid)
+//     .orFail()
+//     .then((user) => res.send(user))
+//     .catch((err) => {
+//       console.error(err);
+//       if (err.name === "DocumentNotFoundError") {
+//         return res.status(NOT_FOUND).send({ message: err.message });
+//       }
+//       if (err.name === "CastError") {
+//         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+//       }
+//       return res
+//         .status(SERVER_ISSUE)
+//         .send({ message: "An error has occurred on the server" });
+//     });
+// };
 
 module.exports.createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -71,7 +71,6 @@ module.exports.createUser = (req, res) => {
       res.send({ name: user.name, avatar: user.avatar, email: user.email })
     )
     .catch((err) => {
-      console.error("new error", err.name);
       console.error(err);
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
@@ -104,7 +103,51 @@ module.exports.login = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.name === "AuthenticationError") {
-        return res.status(AUTHENTICATION_ERROR).send({ message: "Incorrect email or password" });
+        return res
+          .status(AUTHENTICATION_ERROR)
+          .send({ message: "Incorrect email or password" });
+      }
+      return res
+        .status(SERVER_ISSUE)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports.getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) =>
+      res.send({ name: user.name, avatar: user.avatar, email: user.email })
+    )
+    .catch((err) => {
+      console.error(err);
+      return res
+        .status(SERVER_ISSUE)
+        .send({ message: "An error has occurred on the server" });
+    });
+};
+
+module.exports.updateUser = (req, res) => {
+  const { name, avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name: name, avatar: avatar },
+    { new: true, runValidators: true }
+  )
+    .then((user) => {
+      if (!user) {
+        const error = new Error("User does not exist");
+        error.name = "DocumentNotFound";
+        throw error;
+      }
+      res.send({ name: user.name, avatar: user.avatar, email: user.email });
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      }
+      if (err.name === "DocumentNotFound") {
+        return res.status(NOT_FOUND).send({ message: "User does not exist" });
       }
       return res
         .status(SERVER_ISSUE)
