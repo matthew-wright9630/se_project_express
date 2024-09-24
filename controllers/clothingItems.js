@@ -76,7 +76,9 @@ module.exports.likeClothingItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.send({ data: item }))
+    .then((item) => {
+      res.send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -98,7 +100,7 @@ module.exports.dislikeClothingItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

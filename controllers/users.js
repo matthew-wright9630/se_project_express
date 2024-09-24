@@ -86,7 +86,12 @@ module.exports.login = (req, res) => {
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .then((user) =>
-      res.send({ name: user.name, avatar: user.avatar, email: user.email })
+      res.send({
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      })
     )
     .catch((err) => {
       console.error(err);
