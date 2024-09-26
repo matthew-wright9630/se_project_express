@@ -22,7 +22,7 @@ module.exports.createClothingItem = (req, res) => {
   const owner = req.user._id;
 
   ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
