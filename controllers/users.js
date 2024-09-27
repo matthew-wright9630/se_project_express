@@ -115,7 +115,12 @@ module.exports.updateUser = (req, res) => {
         error.name = "DocumentNotFound";
         throw error;
       }
-      res.send({ name: user.name, avatar: user.avatar, email: user.email });
+      res.send({
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
     })
     .catch((err) => {
       console.error(err);
