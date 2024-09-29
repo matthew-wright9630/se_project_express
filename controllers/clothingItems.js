@@ -5,6 +5,7 @@ const {
   SERVER_ISSUE,
   FORBIDDEN_ERROR,
 } = require("../utils/errors");
+const NotFoundError = require("../errors/not-found-error");
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
