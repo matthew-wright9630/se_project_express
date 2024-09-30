@@ -11,7 +11,7 @@ module.exports.createUser = (req, res, next) => {
 
   User.findOne({ email })
     .then((user) => {
-      if (!email) {
+      if (!name || !avatar || !email || !password) {
         throw new BadRequestError("Invalid data");
       }
       if (user) {
