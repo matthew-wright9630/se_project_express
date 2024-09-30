@@ -39,11 +39,8 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(
-    email,
-    password
-  ) /*findUserByCredentials is a function in models/user.js */
-
+  /*findUserByCredentials is a function in models/user.js */
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
         user,
