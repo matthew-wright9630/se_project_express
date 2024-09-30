@@ -11,8 +11,6 @@ const {
   CONFLICT_ERROR,
 } = require("../utils/errors");
 const BadRequestError = require("../errors/bad-request-error");
-const UnauthorizedError = require("../errors/unathorized-error");
-const ForbiddenError = require("../errors/forbidden-error");
 const NotFoundError = require("../errors/not-found-error");
 const ConflictError = require("../errors/conflict-error");
 
@@ -49,14 +47,8 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password) //findUserByCredentials is a function in models/user.js
     .then((user) => {
-      if (!email || !password) {
-        throw new BadRequestError("Invalid data");
-      }
-      if (!user) {
-        throw new UnauthorizedError("Incorrect email or password");
-      }
       res.send({
         user,
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -65,46 +57,25 @@ module.exports.login = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.error(err.message);
       if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
       } else {
         next(err);
       }
     });
-  // .catch((err) => {
-  //   console.error(err);
-  //   if (err.name === "ValidationError") {
-  //     return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-  //   }
-  //   if (err.name === "AuthenticationError") {
-  //     return res
-  //       .status(AUTHENTICATION_ERROR)
-  //       .send({ message: "Incorrect email or password" });
-  //   }
-  //   return res
-  //     .status(SERVER_ISSUE)
-  //     .send({ message: "An error has occurred on the server" });
-  // });
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) =>
+    .then((user) => {
       res.send({
         name: user.name,
         avatar: user.avatar,
         email: user.email,
         _id: user._id,
-      })
-    )
+      });
+    })
     .catch(next);
-  // .catch((err) => {
-  //   console.error(err);
-  //   return res
-  //     .status(SERVER_ISSUE)
-  //     .send({ message: "An error has occurred on the server" });
-  // });
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -115,7 +86,7 @@ module.exports.updateUser = (req, res, next) => {
     { new: true, runValidators: true }
   )
     .then((user) => {
-      if (!name || !avatar) {
+      if (!user.name || !user.avatar) {
         throw new BadRequestError("Invalid data");
       }
       if (!user) {
@@ -128,17 +99,11 @@ module.exports.updateUser = (req, res, next) => {
         _id: user._id,
       });
     })
-    .catch(next);
-  // .catch((err) => {
-  //   console.error(err);
-  //   if (err.name === "ValidationError") {
-  //     return res.status(BAD_REQUEST).send({ message: "Invalid data" });
-  //   }
-  //   if (err.name === "DocumentNotFound") {
-  //     return res.status(NOT_FOUND).send({ message: "User does not exist" });
-  //   }
-  //   return res
-  //     .status(SERVER_ISSUE)
-  //     .send({ message: "An error has occurred on the server" });
-  // });
+    .catch((err) => {
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
+      }
+    });
 };
