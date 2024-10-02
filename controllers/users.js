@@ -14,9 +14,6 @@ module.exports.createUser = (req, res, next) => {
       if (!email) {
         throw new BadRequestError("Invalid data");
       }
-      if (user.name.length < 2 || user.name.length > 30) {
-        throw new BadRequestError("Invalid data");
-      }
       if (user) {
         throw new ConflictError(
           "Email address is already taken. Please provide a new email"
@@ -33,10 +30,19 @@ module.exports.createUser = (req, res, next) => {
         password: hash,
       })
     )
-    .then((user) =>
-      res.send({ name: user.name, avatar: user.avatar, email: user.email })
-    )
-    .catch(next);
+    .then((user) => {
+      console.log(user);
+      res.send({ name: user.name, avatar: user.avatar, email: user.email });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.login = (req, res, next) => {

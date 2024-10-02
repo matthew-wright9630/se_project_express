@@ -23,6 +23,8 @@ module.exports.createClothingItem = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid data"));
       } else {
         next(err);
       }
