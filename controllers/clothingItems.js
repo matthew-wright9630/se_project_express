@@ -36,9 +36,6 @@ module.exports.deleteClothingItem = (req, res, next) => {
   ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
-      if (!item) {
-        throw new NotFoundError("Item not found");
-      }
       if (!item.owner.equals(req.user._id)) {
         throw new ForbiddenError("You do not have permission for this action");
       }
@@ -51,6 +48,8 @@ module.exports.deleteClothingItem = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Item not found"));
       } else {
         next(err);
       }
@@ -65,14 +64,13 @@ module.exports.likeClothingItem = (req, res, next) => {
   )
     .orFail()
     .then((item) => {
-      if (!item) {
-        throw new NotFoundError("Item not found");
-      }
       res.send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Item not found"));
       } else {
         next(err);
       }
@@ -87,14 +85,13 @@ module.exports.dislikeClothingItem = (req, res, next) => {
   )
     .orFail()
     .then((item) => {
-      if (!item) {
-        throw new NotFoundError("Item not found");
-      }
       res.send(item);
     })
     .catch((err) => {
       if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "DocumentNotFoundError") {
+        next(new NotFoundError("Item not found"));
       } else {
         next(err);
       }
