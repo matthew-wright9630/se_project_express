@@ -2,13 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
+const { errors } = require("celebrate");
 const rateLimiter = require("./utils/ratelimiter");
 const router = require("./routes/index");
 const errorHandle = require("./middlewares/error-handler");
 
 const app = express();
 const { PORT = 3001 } = process.env;
-const { errors } = require("celebrate");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
