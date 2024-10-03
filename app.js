@@ -8,6 +8,7 @@ const errorHandle = require("./middlewares/error-handler");
 
 const app = express();
 const { PORT = 3001 } = process.env;
+const { errors } = require("celebrate");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
@@ -21,7 +22,7 @@ app.use(rateLimiter);
 app.use(cors());
 
 app.use("/", router);
-
+app.use(errors);
 app.use(errorHandle);
 
 app.listen(PORT, () => {});
