@@ -2,29 +2,22 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 const User = require("../models/user");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  SERVER_ISSUE,
-  DUPLICATE_USER_ERROR,
-  AUTHENTICATION_ERROR,
-  CONFLICT_ERROR,
-} = require("../utils/errors");
+const BadRequestError = require("../errors/bad-request-error");
+const NotFoundError = require("../errors/not-found-error");
+const ConflictError = require("../errors/conflict-error");
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
 
   User.findOne({ email })
     .then((user) => {
       if (!email) {
-        const error = new Error("ValidationError");
-        error.name = "ValidationError";
-        throw error;
+        throw new BadRequestError("Invalid data");
       }
       if (user) {
-        const error = new Error("DuplicateUserError");
-        error.status = DUPLICATE_USER_ERROR;
-        throw error;
+        throw new ConflictError(
+          "Email address is already taken. Please provide a new email"
+        );
       }
 
       return bcrypt.hash(password, 10);
@@ -37,28 +30,25 @@ module.exports.createUser = (req, res) => {
         password: hash,
       })
     )
-    .then((user) =>
-      res.send({ name: user.name, avatar: user.avatar, email: user.email })
-    )
+    .then((user) => {
+      console.log(user);
+      res.send({ name: user.name, avatar: user.avatar, email: user.email });
+    })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid data"));
+      } else {
+        next(err);
       }
-      if (err.status === DUPLICATE_USER_ERROR) {
-        return res.status(CONFLICT_ERROR).send({
-          message: "Email address is already taken. Please provide a new email",
-        });
-      }
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
+  // findUserByCredentials is a function in models/user.js
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
@@ -69,40 +59,28 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "AuthenticationError") {
-        return res
-          .status(AUTHENTICATION_ERROR)
-          .send({ message: "Incorrect email or password" });
-      }
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) =>
+    .then((user) => {
       res.send({
         name: user.name,
         avatar: user.avatar,
         email: user.email,
         _id: user._id,
-      })
-    )
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
-    });
+      });
+    })
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -110,10 +88,11 @@ module.exports.updateUser = (req, res) => {
     { new: true, runValidators: true }
   )
     .then((user) => {
+      if (!user.name || !user.avatar) {
+        throw new BadRequestError("Invalid data");
+      }
       if (!user) {
-        const error = new Error("User does not exist");
-        error.name = "DocumentNotFound";
-        throw error;
+        throw new NotFoundError("No user with matching ID found");
       }
       res.send({
         name: user.name,
@@ -123,15 +102,10 @@ module.exports.updateUser = (req, res) => {
       });
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      if (err.name === "CastError") {
+        next(new BadRequestError("The id string is in an invalid format"));
+      } else {
+        next(err);
       }
-      if (err.name === "DocumentNotFound") {
-        return res.status(NOT_FOUND).send({ message: "User does not exist" });
-      }
-      return res
-        .status(SERVER_ISSUE)
-        .send({ message: "An error has occurred on the server" });
     });
 };
