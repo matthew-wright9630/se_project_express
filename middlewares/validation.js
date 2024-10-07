@@ -66,6 +66,9 @@ const validateCardCreation = celebrate({
       "string.empty": `The "imageUrl" field must be filled in`,
       "string.uri": `The imageUrl must have a valid url`,
     }),
+    weather: Joi.string().required().messages({
+      "string.empty": `The "imageUrl" field must be filled in`,
+    })
   }),
 });
 

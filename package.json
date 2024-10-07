@@ -13,7 +13,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://wtwrMW.fairuse.org"
+    "url": "se_project_express"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
