@@ -7,6 +7,7 @@ const rateLimiter = require("./utils/ratelimiter");
 const router = require("./routes/index");
 const errorHandle = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+require("dotenv").config();
 
 const app = express();
 const { PORT = 3001 } = process.env;
