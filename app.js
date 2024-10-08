@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,7 +8,6 @@ const rateLimiter = require("./utils/ratelimiter");
 const router = require("./routes/index");
 const errorHandle = require("./middlewares/error-handler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
-require("dotenv").config();
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -24,9 +24,9 @@ app.use(rateLimiter);
 app.use(cors());
 
 app.use(requestLogger);
-app.get('/crash-test', () => {
+app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error('Server will crash now');
+    throw new Error("Server will crash now");
   }, 0);
 });
 app.use("/", router);

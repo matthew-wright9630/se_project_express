@@ -88,9 +88,6 @@ module.exports.updateUser = (req, res, next) => {
     { new: true, runValidators: true }
   )
     .then((user) => {
-      if (!user.name || !user.avatar) {
-        throw new BadRequestError("Invalid data");
-      }
       if (!user) {
         throw new NotFoundError("No user with matching ID found");
       }

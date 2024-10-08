@@ -4,7 +4,6 @@ const FORBIDDEN_ERROR = 403;
 const NOT_FOUND = 404;
 const CONFLICT_ERROR = 409;
 const SERVER_ISSUE = 500;
-const DUPLICATE_USER_ERROR = 1100;
 
 module.exports = {
   BAD_REQUEST,
@@ -12,6 +11,5 @@ module.exports = {
   FORBIDDEN_ERROR,
   NOT_FOUND,
   SERVER_ISSUE,
-  DUPLICATE_USER_ERROR,
   CONFLICT_ERROR,
 };

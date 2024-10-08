@@ -9,11 +9,9 @@ function validateUrl(value, helpers) {
 }
 
 const validateItemId = celebrate({
-  params: Joi.object()
-    .keys({
-      itemId: Joi.string().alphanum().length(24),
-    })
-    .unknown(true),
+  params: Joi.object().keys({
+    itemId: Joi.string().alphanum().length(24),
+  }),
 });
 
 const validateUserSignUp = celebrate({
@@ -49,9 +47,17 @@ const validateUserSignIn = celebrate({
   }),
 });
 
-const validateGetUserRequest = celebrate({
-  params: Joi.object().keys({
-    _id: Joi.string().alphanum().length(24),
+const validateUpdateUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30).messages({
+      "string.min": 'The minimum length of the "name" field is 2',
+      "string.max": 'The maximum length of the "name" field is 30',
+      "string.empty": 'The "name" field must be filled in',
+    }),
+    imageUrl: Joi.string().required().custom(validateUrl).messages({
+      "string.empty": `The "imageUrl" field must be filled in`,
+      "string.uri": `The imageUrl must have a valid url`,
+    }),
   }),
 });
 
@@ -66,12 +72,16 @@ const validateCardCreation = celebrate({
       "string.empty": `The "imageUrl" field must be filled in`,
       "string.uri": `The imageUrl must have a valid url`,
     }),
-    weather: Joi.string().required().messages({
+    weather: Joi.valid("hot", "warm", "cold").required().messages({
       "string.empty": `The "imageUrl" field must be filled in`,
-    })
+    }),
   }),
 });
 
 module.exports = {
-  validateItemId, validateCardCreation, validateUserSignIn, validateUserSignUp, validateGetUserRequest
+  validateItemId,
+  validateCardCreation,
+  validateUserSignIn,
+  validateUserSignUp,
+  validateUpdateUser,
 };

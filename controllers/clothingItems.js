@@ -15,15 +15,10 @@ module.exports.createClothingItem = (req, res, next) => {
 
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      if (!name || !weather || !imageUrl) {
-        throw new BadRequestError("Invalid data");
-      }
       res.send(item);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        next(new BadRequestError("The id string is in an invalid format"));
-      } else if (err.name === "ValidationError") {
+      if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid data"));
       } else {
         next(err);
