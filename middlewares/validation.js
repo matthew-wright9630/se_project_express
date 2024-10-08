@@ -54,9 +54,9 @@ const validateUpdateUser = celebrate({
       "string.max": 'The maximum length of the "name" field is 30',
       "string.empty": 'The "name" field must be filled in',
     }),
-    imageUrl: Joi.string().required().custom(validateUrl).messages({
-      "string.empty": `The "imageUrl" field must be filled in`,
-      "string.uri": `The imageUrl must have a valid url`,
+    avatar: Joi.string().required().custom(validateUrl).messages({
+      "string.empty": `The "avatar" field must be filled in`,
+      "string.uri": `The avatar field must have a valid url`,
     }),
   }),
 });
