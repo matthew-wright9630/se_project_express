@@ -12,5 +12,7 @@ Javascript was used to create the routes and controllers for adding information 
 
 `npm run dev` — to launch the server with the hot reload feature
 
-## Link to the website
-https://www.wtwrmw.fairuse.org/profile
+## Links
+
+- Website: https://www.wtwrmw.fairuse.org/profile
+- Demo: https://www.loom.com/share/c59a598c80d644188eb2e227eab78768?sid=bceaf71d-271f-4feb-8570-91ae51548d08
