@@ -31,7 +31,6 @@ module.exports.createUser = (req, res, next) => {
       })
     )
     .then((user) => {
-      console.log(user);
       res.send({ name: user.name, avatar: user.avatar, email: user.email });
     })
     .catch((err) => {
@@ -52,7 +51,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
-        user,
+        // user,
         token: jwt.sign({ _id: user._id }, JWT_SECRET, {
           expiresIn: "7d",
         }),
