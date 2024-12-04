@@ -14,5 +14,5 @@ Javascript was used to create the routes and controllers for adding information 
 
 ## Links
 
-- Website: https://www.wtwrmw.fairuse.org/profile
+- Website: https://www.wtwrmw.csproject.org/profile
 - Demo: https://www.loom.com/share/c59a598c80d644188eb2e227eab78768?sid=bceaf71d-271f-4feb-8570-91ae51548d08
